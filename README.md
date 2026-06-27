@@ -159,14 +159,20 @@ are tested directly, with the upstream mocked via `respx` for fast, deterministi
 
 ## Deployment
 
+Live at **https://hospital-bulk-bab9.onrender.com** (`/docs` for the Swagger UI).
 Deployed on Render as a web service (`render.yaml` included).
 
 - Start command: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
 - Set `UPSTREAM_BASE_URL` (and any tuning knobs) in the dashboard / `render.yaml`.
+- Python is pinned to 3.13 (`.python-version`) so pip installs prebuilt `pydantic-core`
+  wheels instead of compiling from Rust source.
 
-> **Free-tier note:** the service sleeps when idle, so the **first request after idle can
-> take 30–60s** to cold-start, and the upstream Hospital Directory API has the same
-> behavior. Subsequent requests are fast. This is a free-tier artifact, not a code issue.
+> **Free-tier cold-start note:** both this service *and* the upstream Hospital Directory
+> API sleep when idle. The first request after idle takes 30–60s to wake. If **both** are
+> cold, the very first `POST /hospitals/bulk` can even return a **502** from Render's proxy
+> while the upstream is still waking — **just retry once and it succeeds.** Subsequent
+> requests are fast. This is a free-tier artifact, not a code issue. (Tip: hit `GET /` first
+> to warm this service before a bulk call.)
 
 ---
 
