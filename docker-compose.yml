@@ -1,0 +1,11 @@
+services:
+  hospital-bulk:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      UPSTREAM_BASE_URL: ${UPSTREAM_BASE_URL:-https://hospital-directory.onrender.com}
+      MAX_CONCURRENCY: ${MAX_CONCURRENCY:-10}
+      REQUEST_TIMEOUT_SECONDS: ${REQUEST_TIMEOUT_SECONDS:-30}
+      MAX_RETRIES: ${MAX_RETRIES:-3}
+      ACTIVATE_ON_PARTIAL_FAILURE: ${ACTIVATE_ON_PARTIAL_FAILURE:-false}
